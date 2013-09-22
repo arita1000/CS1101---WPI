@@ -1,5 +1,3 @@
-to Marilda: After registered, you click on "edit", change the code if you want, and click "commit changes" at the bottom of the page
-
 ;; Students:  Hoang Ngo & Marilda Bozdo
 ;; Usernames: hmngo     & mbozdo
 ;; --------------------------------------
@@ -115,24 +113,25 @@ to Marilda: After registered, you click on "edit", change the code if you want, 
 ;;                      - a fire covering at least 50 square miles
 ;;                false otherwise
 
-(check-expect (high-impact? (make-hurricane "n1" 3 90 90 "nowhere")) false)
-(check-expect (high-impact? (make-hurricane "n2" 4 34 34 "nowhere")) true)
-(check-expect (high-impact? (make-hurricane "n3" 5 24 57 "nowhere")) true)
-(check-expect (high-impact? (make-thunderstorm 2 50 354 "nowhere")) false)
-(check-expect (high-impact? (make-thunderstorm 3 50 354 "nowhere")) false)
-(check-expect (high-impact? (make-thunderstorm 3 60 543 "nowhere")) false)
-(check-expect (high-impact? (make-thunderstorm 4 60 354 "nowhere")) false)
-(check-expect (high-impact? (make-thunderstorm 4 70 234 "nowhere")) true)
-(check-expect (high-impact? (make-fire 40 454 236)) false)
-(check-expect (high-impact? (make-fire 50 456 765)) true)
-(check-expect (high-impact? (make-fire 60 645 347)) true)
-
 (define (high-impact? a-storm)
   (cond 
         [(hurricane? a-storm)    (>= (hurricane-category a-storm) 4)]
         [(thunderstorm? a-storm) (and (> (thunderstorm-amount-rainfall a-storm) 3) 
                                       (> (thunderstorm-max-wind-gust   a-storm) 60))]
         [(fire? a-storm)         (>= (fire-cover-area a-storm) 50)]))
+
+;; Test cases:
+(check-expect (high-impact? (make-hurricane "Umbridge" 3 90 90 "California")) false)
+(check-expect (high-impact? (make-hurricane "Ursula" 4 34 34 "New York")) true)
+(check-expect (high-impact? (make-hurricane "Katrina" 5 175 150 "South Florida")) true)
+(check-expect (high-impact? (make-thunderstorm 2 50 354 "California")) false)
+(check-expect (high-impact? (make-thunderstorm 3 50 354 "New York")) false)
+(check-expect (high-impact? (make-thunderstorm 3 60 543 "Texas")) false)
+(check-expect (high-impact? (make-thunderstorm 4 60 354 "Massachusetts")) false)
+(check-expect (high-impact? (make-thunderstorm 4 70 234 "Mexico")) true)
+(check-expect (high-impact? (make-fire 40 454 236)) false)
+(check-expect (high-impact? (make-fire 50 456 765)) true)
+(check-expect (high-impact? (make-fire 60 645 347)) true)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -147,9 +146,9 @@ to Marilda: After registered, you click on "edit", change the code if you want, 
 ;;         return an unchanged storm if the given storm is a fire
 ;;         otherwise produce a storm same as original with a changed heading
 
-(check-expect (change-heading H1 "somewhere") (make-hurricane "Katrina" 5 175 150 "somewhere"))
-(check-expect (change-heading T1 "nowhere") (make-thunderstorm 5 50 80 "nowhere"))
-(check-expect (change-heading F1 "somewhere") F1)
+(check-expect (change-heading F1 "Texas") F1)
+(check-expect (change-heading T1 "Boston") (make-thunderstorm   5 50 80 "Boston"))
+(check-expect (change-heading H1 "Philadelphia") (make-hurricane  "Katrina" 5 175 150 "Philadelphia"))
 
 (define (change-heading a-storm heading)
   (cond [(hurricane? a-storm) (make-hurricane (hurricane-name      a-storm) 
@@ -177,7 +176,7 @@ to Marilda: After registered, you click on "edit", change the code if you want, 
 (define LOS2 (cons "paper" empty))
 (define LOS3 (cons "paper" (cons "pen" (cons "idiosyncrasy" empty))))
 
-;; Signature: charachter-count: list-of-string->number
+;; Signature: character-count: list-of-string->number
 ;; Interp: consumes a list of string and produces the total number of characters 
 ;;         in all strings of the list
 
@@ -203,7 +202,7 @@ to Marilda: After registered, you click on "edit", change the code if you want, 
 
 ;; --------------------------------------------- MAIN FUNCTION -----------------------------------------------------
 ;; Signature: all-contain-number? : ListOfString -> Boolean
-;; Purpose: return true if a ListOfString contains at least one numeric character
+;; Purpose: return true if every ListOfString contains at least one numeric character
 ;;                 false otherwise
 
 (check-expect (all-contain-number? empty) false)
@@ -243,8 +242,8 @@ to Marilda: After registered, you click on "edit", change the code if you want, 
         (string-contains? "9" str)))
 
 ;; Signature: almost-end? : ListOfString -> boolean
-;; Purpose: consume a list having 2 elements at least and
-;;          return true if the ListOfString contains only 2 elements left
+;; Purpose: consume a list having 1 element at least and
+;;          return true if the ListOfString contains only no elements left
 ;;                 false otherwise
 
 (check-expect (almost-end? (cons "asd" empty)) true)
