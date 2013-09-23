@@ -66,7 +66,7 @@
 ;;         	  false otherwise
 
 (check-expect (sector=? B1 "Moo") true)		;; B1's kind of business: "Moo"
-(check-expect (sector=? B2 "Cow") false)		;; B2's kind of business: "Moo"
+(check-expect (sector=? B2 "Cow") false)	;; B2's kind of business: "Moo"
 
 (define (sector=? a-borrower type-of-business)
   (string=? (borrower-kind-of-business a-borrower) 
