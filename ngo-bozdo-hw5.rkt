@@ -87,13 +87,7 @@
 (define (fun-for-bst abst)
     (cond 
         [(symbol? abst) (...)]
-        [(book?   abst) (... (book-title                    abook)
-                             (fun-for-author (book-authors  abook))
-                             (book-cost                     abook)
-                             (book-n-sold                   abook)
-                             (book-isbn                     abook)
-                             (fun-for-bst (book-ltbt        abook))
-                             (fun-for-bst (book-rtbt        abook)))]))
+        [(book?   abst) (... (fun-for-book abst))]))
    
    
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -102,39 +96,6 @@
 ;;            produces a binary search tree the same as the original 
 ;;	except that the cost of each book in the tree has been increased by the given percentage.                            
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Signature: increase-price: BST number -> BST
-;; interp: consumes a binary search tree of books and a percentage and produces 
-;;  a binary search tree same as the original but with cost of book increased by the percentage given 
-
-
-(define (increase-price abst percentage)
-    (cond 
-        [(symbol? abst) 'unknown]
-        [(book?   abst) (make-book (book-title    abst)
-                                   (book-authors  abst)
-                                   (/ (* (book-cost  abst) 
-                                         (+ 100 percentage))
-                                      100)
-                                   (book-n-sold   abst)
-                                   (book-isbn     abst)
-                                   (increase-price (book-ltbt abst) percentage)
-                                   (increase-price (book-rtbt abst) percentage))]))
-
-
-(check-expect (increase-price 'unknown 20) 'unknown)
-(check-expect (increase-price BST1 10) 
-              (make-book "A Christmas Carol" (cons "Charles Dickens" empty) 55 10000 10                  
-                     (make-book "Oliver Twist"  (cons "Charles Dickens" empty) 55 20000 6 
-                                'unknown 
-                                'unknown)
-                     (make-book "Great Expectations" (cons "Charles Dickens" empty) 55 50000 15         
-                                (make-book "David Copperfield" (cons "Charles Dickens" empty) 55 20000 11 
-                                           'unknown 
-                                           'unknown)
-                                (make-book "Bleak House" (cons "Charles Dickens" empty) 55 90000 20 
-                                           'unknown 
-                                           'unknown))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -145,24 +106,6 @@
 ;;                  such that it performs as few comparisons as is necessary to find the correct ISBN number in the tree.                           
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Signature: copies-sold: BST number -> number
-;; interp: consumes a binary search tree and an ISBN and produces the number of copies sold for the book with the given ISBN
-
-(define (copies-sold abst ISBN)
-    (cond 
-        [(symbol? abst) -1]
-        [(book?   abst) 
-         (cond
-          [(= (book-isbn abst) ISBN) (book-n-sold abst)]
-          [(< (book-isbn abst) ISBN) (copies-sold (book-rtbt abst) ISBN)]
-          [(> (book-isbn abst) ISBN) (copies-sold (book-ltbt abst) ISBN)])]))
-          
-
-(check-expect (copies-sold BST1 11) 20000) 
-(check-expect (copies-sold 'unknown 21) -1)   
-(check-expect (copies-sold BST1 10) 10000)
-(check-expect (copies-sold BST1 20) 90000)
-(check-expect (copies-sold BST1 70) -1)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -206,12 +149,9 @@
 ;;          find the given author in the book's list of authors, 
 ;;              return true if found and false otherwise
 
-(check-expect (author-of-book? 'unknown 2  "ABC")              false)           ; Empty tree
-(check-expect (author-of-book? BST1     99 "ABC")              false)           ; non-existed & too big isbn
-(check-expect (author-of-book? BST1     1  "ABC")              false)           ; non-existed & too small isbn
-(check-expect (author-of-book? BST1     2  "Charles Dickens")  false)           ; non-existed isbn & existed author
-(check-expect (author-of-book? BST1     6  "Charles Dickens")  true)            ; book of left branch
-(check-expect (author-of-book? BST1     20 "Charles Dickens")  true)            ; book of right branch
+(check-expect (author-of-book? 'unknown 2  "ABC")              false)
+(check-expect (author-of-book? BST1     6  "Charles Dickens")  true)
+(check-expect (author-of-book? BST1     20 "Charles Dickens")  true)
 
 (define (author-of-book? abst isbn author)
     (cond
@@ -281,7 +221,7 @@
         
 
 ;; -------------------------------------------------- MAIN FUNCTION ------------------------------------------------------
-;; add-new-book : BST Number string ListOfAuthor Number -> BST
+;; add-new-book : BST Number string ListOfAuthor Number -> binary-tree
 ;; Purpose: add a new book with given information to proper branch of a binary search tree
 
 (check-expect (add-new-book BST1 7 "The Old Curiosity Shop" (cons "Charles Dickens" empty) 50)
@@ -330,9 +270,17 @@
                                                'unknown))))
 
 
+(check-expect(add-new-book  BST1 5 "Harry Potter" (cons "Rowling" empty) 17) 
+             (make-book "A Christmas Carol" (list "Charles Dickens") 50 10000 10
+                        (make-book "Oliver Twist" (list "Charles Dickens") 50  20000 6
+                                   (make-book "Harry Potter"(list "Rowling") 17 0 5 'unknown'unknown) 'unknown)
+                        (make-book "Great Expectations"  (list "Charles Dickens") 50 50000  15 (make-book "David Copperfield" (list "Charles Dickens")  50 20000 11 'unknown 'unknown)
+                                   (make-book "Bleak House" (list "Charles Dickens") 50 90000 20 'unknown 'unknown))))
+
 (define (add-new-book abst isbn title authors price)
     (cond 
         [(symbol? abst) (make-book title authors price INIT-COPIES-SOLD isbn 'unknown 'unknown)]
         [(book?   abst) (insert title authors price isbn abst)]))
         
+(check-expect (add-new-book 'unknown 12 "A Tale of Two Cities" (list "Charles Dickens") 30) (make-book "A Tale of Two Cities" (list "Charles Dickens") 30 0 12 'unknown 'unknown))
          
