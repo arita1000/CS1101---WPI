@@ -103,6 +103,32 @@
 ;;	except that the cost of each book in the tree has been increased by the given percentage.                            
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Signature: increase-price: binary-search-tree number -> binary-search-tree
+;; interp: consumes a binary search tree of books and a percentage and produces 
+;;  a binary search tree same as the original but with cost of book increased by the percentage given 
+
+
+(define (increase-price abst percentage)
+    (cond 
+        [(symbol? abst) 'unknown ]
+        [(book?   abst) (make-book 
+                        (book-title abst)
+                        (book-authors  abst)
+                        (* (book-cost abst)(+ 1 percentage))
+                        (book-n-sold abst)
+                        (book-isbn abst)
+                    (increase-price (book-ltbt abst) percentage)
+                    (increase-price (book-rtbt abst) percentage))]))
+
+
+(check-expect (increase-price 'unknown 0.2) 'unknown)
+(check-expect (increase-price BST1 0.1) (make-book "A Christmas Carol" (cons "Charles Dickens" empty) 55 10000 10                  
+                                         (make-book "Oliver Twist"  (cons "Charles Dickens" empty) 55 20000 6 'unknown 'unknown)
+                                          (make-book "Great Expectations" (cons "Charles Dickens" empty) 55 50000 15          
+                                          (make-book "David Copperfield" (cons "Charles Dickens" empty) 55 20000 11 'unknown 'unknown)
+                                           (make-book "Bleak House" (cons "Charles Dickens" empty) 55 90000 20 'unknown 'unknown))))
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Problem 5: Write a function copies-sold which consumes a binary search tree and an ISBN number, 
@@ -111,6 +137,26 @@
 ;; Your function should be written efficiently, 
 ;;                  such that it performs as few comparisons as is necessary to find the correct ISBN number in the tree.                           
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;Signature: copies-sold: binary-search-tree number -> number
+;;interp: consumes a binary search tree and an ISBN and produces the number of copies sold for the book with the given ISBN
+
+(define (copies-sold abst ISBN)
+    (cond 
+        [(symbol? abst) -1]
+        [(book?   abst) 
+         (cond
+          [(= (book-isbn abst) ISBN) (book-n-sold abst)]
+          [(< (book-isbn abst) ISBN) (copies-sold (book-rtbt abst) ISBN)]
+          [(> (book-isbn abst) ISBN) (copies-sold (book-ltbt abst) ISBN)])]))
+          
+
+(check-expect (copies-sold BST1 11) 20000) 
+(check-expect (copies-sold 'unknown 21) -1)   
+(check-expect (copies-sold BST1 10) 10000)
+(check-expect (copies-sold BST1 20) 90000)
+(check-expect (copies-sold BST1 70) -1)
+
 
 
 
