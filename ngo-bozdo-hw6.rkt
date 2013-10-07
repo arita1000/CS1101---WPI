@@ -299,7 +299,7 @@
 
 
 (define (list-all-businesses alob)
-  (map borrower-name alob))
+  (map borrower-business alob))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -321,6 +321,6 @@
 
 
 (define (names-large-loans alob loan)
-  (local [(define (large-loan? borrower)
-            (> (borrower-requested borrower) loan))]
+  (local [(define (large-loan? aborrower)
+            (> (borrower-requested aborrower) loan))]
     (map borrower-name (filter large-loan? alob))))
