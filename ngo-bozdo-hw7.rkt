@@ -239,6 +239,11 @@ NETWORK
 (find-person "Nate")
 
 (display "\n")    ; Insert a blank line
+
+"Find and display a person in NETWORK with name 'Anna' who does not exist. Expect 'Not found'"
+(find-person "Anna")
+
+(display "\n")    ; Insert a blank line
 (display "\n")    ; Insert a blank line
 
 
@@ -296,3 +301,6 @@ JULIA
 
 (display "\n")    ; Insert a blank line
 (display "\n")    ; Insert a blank line
+
+;; Reset
+(set! NETWORK (list LUKE ERIK PETER JULIA NATE))
