@@ -63,7 +63,16 @@
 ;;            produces a list of the names of all people in the network. 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-      
+;; Signature: list-names-in-network:    ->ListOfString
+;; interp: the function should consume nothing and produce the list of all people in the network
+
+(define (list-names-in-network)
+    (set! NETWORK (append (cons (person-name (first NETWORK)) (map person-name (person-friend-list (first NETWORK))))
+                    (map person-name (rest NETWORK)))))
+
+
+(list-names-in-network)
+NETWORK
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Problem 6: Write a function list-all-names that doesn't consume anything and 
@@ -72,8 +81,16 @@
 ;;            This time, you must use accumulator-style programming to solve the problem.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Signature: list-all-names:    ->ListOfString
+;; interp: the function should consume nothing and produce the list of all people in the network
 
-                                                       
+(define (name-accum alop names-so-far)
+  (cond [(empty? alop) names-so-far]
+        [(cons? alop) (append (name-accum (rest alop)) (cons (person-name (first alop)) names-so-far))]))
+
+(define (list-all-names)
+  (set! NETWORK (name-accum NETWORK empty)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Problem 7: Write a function friend that consumes two persons, and 
 ;;            makes them each a friend of the other. 
