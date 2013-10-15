@@ -21,8 +21,6 @@
 ;;            (it should initially be empty).
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; NETWORK: ListOfPerson
-;; Interp. store information of each person in the social network
 (define NETWORK empty)
 
 
@@ -39,8 +37,8 @@
 
 ;; ------------------------------------------------- MAIN FUNCTION -------------------------------------------------------
 ;; create-person: string string -> person
-;; Purpose: consume a person's name and email
-;;          return a new person
+;; Interp. consume a person's name and email
+;;         return a new person
 ;; EFFECT: add a person with given info into NETWORK
 
 (define (create-person name email)
@@ -64,9 +62,8 @@
 ;; Problem 5: Write a function list-names-in-network that doesn't consume anything and 
 ;;            produces a list of the names of all people in the network. 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;; Signature: list-names-in-network : -> ListOfString
-;; Purpose: produce the list of all people in the network
+;; interp: produce the list of all people in the network
 
 (define (list-names-in-network)
   (map person-name NETWORK))
@@ -83,14 +80,14 @@
 
 ;; ------------------------------------------------- MAIN FUNCTION -------------------------------------------------------
 ;; Signature: list-all-names : -> ListOfString
-;; Purpose: produce the list of all people's names in the network
+;; interp: produce the list of all people's names in the network
 (define (list-all-names)
   (name-accum NETWORK empty))
 
             
 ;; ------------------------------------------------ HELPER FUNCTIONS -----------------------------------------------------
 ;; Signature: name-accum: ListOfPeople ListOfString -> ListOfString
-;; Purpose: consume a list of people and produce all their names by remembering the list of names so far
+;; interp: consume a list of people and produce all their names  by remembering the list of names so far
 
 (define (name-accum alop list-of-name)
   (cond [(empty? alop) list-of-name]
@@ -112,18 +109,18 @@
 
 ;; ------------------------------------------------- MAIN FUNCTION -------------------------------------------------------
 ;; friend : person person -> void
-;; Purpose: make two given people friends
-;; EFFECT:  add each person into other's friend list
+;; Interp. make two given people friends
+;; EFFECT: add each person into other's friend list
 
-(define (friend person1 person2)
+(define (friend p1 p2)
       (begin
-            (add-to-friend-list person1 person2)
-            (add-to-friend-list person2 person1)))
+            (add-to-friend-list p1 p2)
+            (add-to-friend-list p2 p1)))
             
             
 ;; ------------------------------------------------ HELPER FUNCTIONS -----------------------------------------------------
 ;; add-to-friend-list : person person -> void
-;; Purpose: add a formal person into latter person's friend list
+;; Interp. add a formal person into latter person's friend list
 
 (define (add-to-friend-list added-person person)
       (set-person-friend-list! person (cons added-person 
@@ -137,9 +134,9 @@
 
 ;; ------------------------------------------------- MAIN FUNCTION -------------------------------------------------------
 ;; find-person : string -> person
-;; Purpose: consume the name of a person and
-;;          return the person who has that name in NETWORK or
-;;                 "not found" if there is no person having that name
+;; Interp. consume the name of a person and
+;;         return the person who has that name in NETWORK or
+;;                "not found" if there is no person having that name
 
 (define (find-person name)
       (find-person-in-list name NETWORK))
@@ -147,13 +144,13 @@
             
 ;; ------------------------------------------------ HELPER FUNCTIONS -----------------------------------------------------
 ;; find-person-in-list : string ListOfPerson -> person
-;; Purpose: consume name of a person and a list of people
-;;          return that person if that person exists in the list
-;;          return "not found" if that person doesn't exist in the list
+;; Interp. consume name of a person and a list of people
+;;         return that person if that person exists in the list
+;;         return "not found" if that person doesn't exist in the list
 
 (define (find-person-in-list name alop)
       (cond 
-            [(empty? alop) "not found"]
+            [(empty? alop) (error "not found")]
             [(cons?  alop) (if (string=? name (person-name (first alop)))
                                (first alop)
                                (find-person-in-list name (rest alop)))]))
@@ -166,29 +163,7 @@
 ;;            You may use the built-in Racket function length.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; ------------------------------------------------- MAIN FUNCTION -------------------------------------------------------
-;; most-social : -> person
-;; Purpose: return person with the most friends
-;;          return "empty network" if the network doesn't have any person
 
-(define (most-social)
-       (cond
-            [(empty? NETWORK) "empty network"]
-            [(cons?  NETWORK) (person-most-friends (rest NETWORK) (first NETWORK))])) 
-      
-
-;; ------------------------------------------------ HELPER FUNCTIONS -----------------------------------------------------
-;; person-most-friends : ListOfPerson person -> person
-;; Purpose: return the person with the most friends
-
-(define (person-most-friends alop most-friends)
-      (cond
-            [(empty? alop) most-friends]
-            [(cons?  alop) (person-most-friends (rest alop)
-                                              (if (> (length (person-friend-list (first alop))) 
-                                                     (length (person-friend-list most-friends)))
-                                                  (first alop)
-                                                  most-friends))]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Problem 10: Write a function change-email that consumes the name of a person and a new email address and 
@@ -197,8 +172,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; change-email : string string -> void
-;; Purpose: change email of a given person to a new one
-;; EFFECT:  change email of one person in NETWORK
+;; Interp. change email of a given person to a new one
+;; EFFECT: change email of one person in NETWORK
 
 (define (change-email name new-email)
       (set-person-email! (find-person name) new-email))
@@ -210,36 +185,27 @@
 ;;             Provide comments with your tests that explain what you are demonstrating, and 
 ;;             label the results that will show up in the Interactions Window
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;################################################ Testing "friend" #######################################################;
-"################################################ Friend function ########################################################"
-"Display the NETWORK containing 5 people, none of whom has friend"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Testing "friend" ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+"NETWORK in the beginning"
 NETWORK
 
-(display "\n")    ; Insert a blank line
+"Apply the written funcion on NETWORK"
+(friend (make-person "Nate"  "nate@wpi.edu" empty) (make-person "Luke"   "luke@wpi.edu" empty))
 
-"Set up these friends: Nate/Julia, Julia/Peter, Peter/Erik, Erik/Luke"
-(friend NATE  JULIA)
-(friend JULIA PETER)
-(friend PETER ERIK)
-(friend ERIK  LUKE)
-
-(display "\n")    ; Insert a blank line
-
-"Display the NETWORK with these friends"
+"The new values of network now are"
 NETWORK
 
-(display "\n")    ; Insert a blank line
-(display "\n")    ; Insert a blank line
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Testing "find-person" ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;############################################# Testing "find-person" ####################################################;
-"############################################# find-person function #####################################################"
+(check-expect (find-person "Luke") (make-person "Luke" "luke@wpi.edu" empty))
 
-"Find and display a person in NETWORK with name 'Nate'"
-(find-person "Nate")
+"When running the function on a name that is not on the list"
+(find-person "Marilda")
+(error "not found")
 
-(display "\n")    ; Insert a blank line
-(display "\n")    ; Insert a blank line
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Testing "most-social" ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(check-expect (most-social) "empty network")
 
 
 ;############################################# Testing "change-email" ####################################################;
@@ -267,32 +233,6 @@ NETWORK
 
 "Display Julia who has Nate in her friend list. Nate's email in Julia' friend list should be the new one"
 JULIA
-
-(display "\n")    ; Insert a blank line
-(display "\n")    ; Insert a blank line
-
-
-;############################################# Testing "most-social" ####################################################;
-"############################################# most-social function #####################################################"
-
-"Make Nate the most social member in NETWORK by adding Peter and Erik to Nate's friend list"
-(friend NATE PETER)
-(friend NATE ERIK)
-
-(display "\n")    ; Insert a blank line
-
-"Find and return a person who has most friends in NETWORK. It should be Nate"
-(most-social)
-
-(display "\n")    ; Insert a blank line
-
-"Remove all members in NETWORK"
-(set! NETWORK empty)
-
-(display "\n")    ; Insert a blank line
-
-"Run most-social on an empty network. Suppose to get error here"
-(most-social)
 
 (display "\n")    ; Insert a blank line
 (display "\n")    ; Insert a blank line
