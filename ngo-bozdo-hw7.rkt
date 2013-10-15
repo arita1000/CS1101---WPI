@@ -63,8 +63,14 @@
 ;;            produces a list of the names of all people in the network. 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-      
+(define (list-names-in-network)
+  (local [(define (list-names alop) (map person-name alop))]
+    (list-names NETWORK)))
 
+
+(list-names-in-network)
+
+      
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Problem 6: Write a function list-all-names that doesn't consume anything and 
 ;;            produces a list of the names of all people in the network 
