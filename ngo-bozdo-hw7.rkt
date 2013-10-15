@@ -62,15 +62,9 @@
 ;; Problem 5: Write a function list-names-in-network that doesn't consume anything and 
 ;;            produces a list of the names of all people in the network. 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Signature: list-names-in-network : -> ListOfString
-;; interp: produce the list of all people in the network
-
-(define (list-names-in-network)
-  (map person-name NETWORK))
-
-(check-expect (list-names-in-network) (list "Luke" "Erik" "Peter" "Julia" "Nate"))
 
       
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Problem 6: Write a function list-all-names that doesn't consume anything and 
 ;;            produces a list of the names of all people in the network 
@@ -78,26 +72,7 @@
 ;;            This time, you must use accumulator-style programming to solve the problem.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; ------------------------------------------------- MAIN FUNCTION -------------------------------------------------------
-;; Signature: list-all-names : -> ListOfString
-;; interp: produce the list of all people's names in the network
-(define (list-all-names)
-  (name-accum NETWORK empty))
 
-            
-;; ------------------------------------------------ HELPER FUNCTIONS -----------------------------------------------------
-;; Signature: name-accum: ListOfPeople ListOfString -> ListOfString
-;; interp: consume a list of people and produce all their names  by remembering the list of names so far
-
-(define (name-accum alop list-of-name)
-  (cond [(empty? alop) list-of-name]
-        [(cons? alop) (name-accum (rest alop) 
-                                  (cons (person-name (first alop)) 
-                                        list-of-name))]))
-
-
-(check-expect (list-all-names) (list "Nate" "Julia" "Peter" "Erik" "Luke"))
-                                                       
                                                        
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Problem 7: Write a function friend that consumes two persons, and 
@@ -107,25 +82,7 @@
 ;; Your function should return void.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; ------------------------------------------------- MAIN FUNCTION -------------------------------------------------------
-;; friend : person person -> void
-;; Interp. make two given people friends
-;; EFFECT: add each person into other's friend list
 
-(define (friend p1 p2)
-      (begin
-            (add-to-friend-list p1 p2)
-            (add-to-friend-list p2 p1)))
-            
-            
-;; ------------------------------------------------ HELPER FUNCTIONS -----------------------------------------------------
-;; add-to-friend-list : person person -> void
-;; Interp. add a formal person into latter person's friend list
-
-(define (add-to-friend-list added-person person)
-      (set-person-friend-list! person (cons added-person 
-                                            (person-friend-list person))))
-                                            
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Problem 8: Write a function find-person that consumes the name of a person and 
@@ -163,6 +120,29 @@
 ;;            You may use the built-in Racket function length.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; MAIN FUNCTION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Signature: most-social:  -> Person
+;; interp: the function doesn't consume anything and it produces the person with most friends in the network
+
+(define (most-social)
+  (more-friends (rest NETWORK) (first NETWORK)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; HELPER FUNCTION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Signature: more-friends: ListOfPerson Person -> Person
+;; interp: consumes a list of person and a person who has the greatest number of friends so far and
+;; produces the person with most friends
+
+
+  (define(more-friends alop more-so-far)
+  (cond [(empty? alop) "empty network"]
+        [(cons? alop) (if (> (length (person-friend-list (first alop))) (length (person-friend-list more-so-far)))
+                        (more-friends (rest alop) (first alop))
+                          (more-friends (rest alop) more-so-far))]))
+
+  (check-expect (most-social) "empty network")
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -177,40 +157,3 @@
 
 (define (change-email name new-email)
       (set-person-email! (find-person name) new-email))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Problem 11: Construct a set of tests that demonstrate the correctness of the functions friend, find-person, 
-;;                                                                                        most-social, and change-email. 
-;;             Provide comments with your tests that explain what you are demonstrating, and 
-;;             label the results that will show up in the Interactions Window
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;############################################# Testing "change-email" ####################################################;
-"############################################# change-email function #####################################################"
-
-"NETWORK with Nate's original email"
-NETWORK
-
-(display "\n")    ; Insert a blank line
-
-"Nate's original email in Julia's friend list"
-JULIA
-
-(display "\n")    ; Insert a blank line
-
-"Change Nate's email to superNate@wpi.edu"
-(change-email "Nate" "superNate@wpi.edu")
-
-(display "\n")    ; Insert a blank line
-
-"Display NETWORK in which Nate has new email"
-NETWORK
-
-(display "\n")    ; Insert a blank line
-
-"Display Julia who has Nate in her friend list. Nate's email in Julia' friend list should be the new one"
-JULIA
-
-(display "\n")    ; Insert a blank line
-(display "\n")    ; Insert a blank line
